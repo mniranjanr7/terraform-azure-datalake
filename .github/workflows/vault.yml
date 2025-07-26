@@ -12,15 +12,25 @@ jobs:
 
             - name: Install Vault CLI
               run: |
-                sudo apt-get install -y unzip
-                curl -sLo vault.zip https://releases.hashicorp.com/vault/1.15.0/vault_1.15.0_linux_amd64.zip
-                unzip vault.zip && sudo mv vault /usr/local/bin/
-                vault -v
                 export VAULT_ADDR="http://ec2-23-22-230-111.compute-1.amazonaws.com:8200"
                 echo $VAULT_ADDR
+                unzip vault.zip && sudo mv vault /usr/local/bin/
+                vault -v
                 curl -I $VAULT_ADDR/v1/sys/health # Check if Vault is reachable and health
+            
+            - name: authenticate to Vault using JWT
+              id: vault_auth
+              run: |
+                export VAULT_ADDR="http://ec2-23-22-230-111.compute-1.amazonaws.com:8200"
+                echo $VAULT_ADDR
+                if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ] || [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+                  echo "Required GitHub Actions OIDC environment variables are not set."
+                  exit 1
+                fi
+                jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
+                vault login -method=jwt role="cbu_jwt_role" jwt="$jwt_token"
 
-            - name: Authenticate to Vault (simpler)
+            - name: Authenticate to Vault using Vault Action
               id: vault_jwt_auth
               uses: hashicorp/vault-action@v3
               with:
