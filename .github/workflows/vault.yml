@@ -20,6 +20,9 @@ jobs:
                 echo $VAULT_ADDR
                 curl -I $VAULT_ADDR/v1/sys/health # Check if Vault is reachable and healthy
                 jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
+                jwt_token_formatted=$(echo $jwt_token | sed 's/\"//g') # Remove quotes if present
+                echo "JWT Token: $jwt_token_formatted"
+                export VAULT_LOG_LEVEL=debug
                 vault login -method=jwt -path=jwt/ role="get-azure-creds-role" jwt="$jwt_token"
 
             - name: Authenticate to Vault (simpler)
