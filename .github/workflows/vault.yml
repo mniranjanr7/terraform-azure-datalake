@@ -24,6 +24,7 @@ jobs:
                  export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
                  jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
                  vault login -method=jwt role="get-azure-creds-role" jwt="$jwt_token"
+                 vault auth list
 
             - name: Read Dynamic Azure SP credentials
               run: |
