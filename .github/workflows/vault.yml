@@ -19,6 +19,7 @@ jobs:
                 export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
                 echo $VAULT_ADDR
                 curl -I $VAULT_ADDR/v1/sys/health # Check if Vault is reachable and healthy
+                vault auth list
 
             - name: Authenticate to Vault (simpler)
               id: vault_jwt_auth
