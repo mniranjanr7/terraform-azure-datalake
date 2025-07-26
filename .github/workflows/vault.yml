@@ -1,0 +1,21 @@
+name: Connect to Vault to gather secrets
+on: workflow_dispatch
+jobs:
+    ConnectToVault:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repostory
+              uses: actions/checkout@v3
+
+            - name: Authenticate to Vault (simpler)
+              run: |
+                 export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
+                 jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
+                 vault login -method=jwt role="get-azure-creds-role" jwt="$jwt_token"
+
+            - name: Read Dynamic Azure SP credentials
+              run: |
+                 export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
+                 vault read -format=json azure/creds/get-azure-creds-role > azure_creds.json
+                 cat azure_creds.json
+              
