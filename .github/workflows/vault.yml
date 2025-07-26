@@ -12,9 +12,10 @@ jobs:
 
             - name: Install Vault CLI
               run: |
+                curl -fsSL https://releases.hashicorp.com/vault/1.15.0/vault_1.15.0_linux_amd64.zip -o vault.zip
+                unzip vault.zip && sudo mv vault /usr/local/bin/
                 export VAULT_ADDR="http://ec2-23-22-230-111.compute-1.amazonaws.com:8200"
                 echo $VAULT_ADDR
-                unzip vault.zip && sudo mv vault /usr/local/bin/
                 vault -v
                 curl -I $VAULT_ADDR/v1/sys/health # Check if Vault is reachable and health
             
