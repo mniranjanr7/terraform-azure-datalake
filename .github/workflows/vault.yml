@@ -19,7 +19,8 @@ jobs:
                 export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
                 echo $VAULT_ADDR
                 curl -I $VAULT_ADDR/v1/sys/health # Check if Vault is reachable and healthy
-                vault auth list
+                jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
+                vault login -method=jwt -path=jwt/ role="get-azure-creds-role" jwt="$jwt_token"
 
             - name: Authenticate to Vault (simpler)
               id: vault_jwt_auth
@@ -27,7 +28,6 @@ jobs:
                  export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
                  jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
                  vault login -method=jwt -path=jwt/ role="get-azure-creds-role" jwt="$jwt_token"
-                 vault auth list
 
             - name: Read Dynamic Azure SP credentials
               run: |
