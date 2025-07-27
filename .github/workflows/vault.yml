@@ -14,33 +14,36 @@ jobs:
               run: |
                 curl -fsSL https://releases.hashicorp.com/vault/1.15.0/vault_1.15.0_linux_amd64.zip -o vault.zip
                 unzip vault.zip && sudo mv vault /usr/local/bin/
-                export VAULT_ADDR="http://ec2-23-22-230-111.compute-1.amazonaws.com:8200"
+                export VAULT_ADDR="ec2-34-202-161-230.compute-1.amazonaws.com:8200"
                 echo $VAULT_ADDR
                 vault -v
                 curl -I $VAULT_ADDR/v1/sys/health # Check if Vault is reachable and health
             
-            - name: authenticate to Vault using JWT
-              id: vault_auth
-              run: |
-                export VAULT_ADDR="http://ec2-23-22-230-111.compute-1.amazonaws.com:8200"
-                echo $VAULT_ADDR
-                if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ] || [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
-                  echo "Required GitHub Actions OIDC environment variables are not set."
-                  exit 1
-                fi
-                jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
-                vault login -method=jwt role="cbu_jwt_role" jwt="$jwt_token"
+            # - name: authenticate to Vault using JWT
+            #   id: vault_auth
+            #   run: |
+            #     export VAULT_ADDR="ec2-34-202-161-230.compute-1.amazonaws.com:8200"
+            #     echo $VAULT_ADDR
+            #     if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ] || [ -z "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+            #       echo "Required GitHub Actions OIDC environment variables are not set."
+            #       exit 1
+            #     fi
+            #     jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
+            #     vault login -method=jwt role="cbu_jwt_role" jwt="$jwt_token"
 
-            - name: Authenticate to Vault using Vault Action
+            - name: Authenticate to Vault using Vault jwt roles to get Azure SP credentials
               id: vault_jwt_auth
               uses: hashicorp/vault-action@v3
               with:
-                url: "http://ec2-23-22-230-111.compute-1.amazonaws.com:8200"
+                url: "http://ec2-34-202-161-230.compute-1.amazonaws.com:8200"
                 method: jwt
                 role: cbu_jwt_role
                 secrets: |
                   kv/data/aabk/dev/pipeline/sp password | PASSWORD;
                   kv/data/aabk/dev/pipeline/sp username | USERNAME;
+                  azure/creds/azure_role_resource_deploy client_id | CLIENT_ID;
+                  azure/creds/azure_role_resource_deploy client_secret | CLIENT_SECRET;
+                # If you want to use the GitHub Actions OIDC token, uncomment the following lines
 
 
                 #  export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
