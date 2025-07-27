@@ -50,7 +50,14 @@ jobs:
 
             - name: Read Dynamic Azure SP credentials
               run: |
-                echo "Username: ${{ steps.vault_jwt_auth.outputs.CLIENT_ID }}"
-                echo "Password: ${{ steps.vault_jwt_auth.outputs.CLIENT_SECRET }}"
+                echo "Client_id: ${{ steps.vault_jwt_auth.outputs.CLIENT_ID }}"
+                echo "Client_secret: ${{ steps.vault_jwt_auth.outputs.CLIENT_SECRET }}"
                 echo "Vault authentication successful and secrets retrieved."
-              
+
+            - name: Set up Azure credentials and login to azure
+              uses: azure/login@v1
+              with:
+                client-id: ${{ steps.vault_jwt_auth.outputs.CLIENT_ID }}
+                # client-secret: ${{ steps.vault_jwt_auth.outputs.CLIENT_SECRET }}
+                tenant-id: "066fe1a7-14e1-4d6c-9f26-61b3da1d6f45" # Replace with your Azure tenant ID
+                enable-AzPSSession: true
