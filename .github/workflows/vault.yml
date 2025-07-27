@@ -63,6 +63,6 @@ jobs:
             #     enable-AzPSSession: true
             - name: Set up Azure credentials and login to azure
               run: |
-                tenant-id: "066fe1a7-14e1-4d6c-9f26-61b3da1d6f45" # Replace with your Azure tenant ID
+                tenant-id="066fe1a7-14e1-4d6c-9f26-61b3da1d6f45" # Replace with your Azure tenant ID
                 az login --service-principal --username ${{ steps.vault_jwt_auth.outputs.CLIENT_ID }} --password ${{ steps.vault_jwt_auth.outputs.CLIENT_SECRET }} --tenant $tenant-id
                 echo "Azure login successful with service principal credentials."
