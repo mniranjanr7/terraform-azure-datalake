@@ -39,13 +39,11 @@ jobs:
                 method: jwt
                 role: cbu_jwt_role
                 secrets: |
-                  # kv/data/aabk/dev/pipeline/sp password | PASSWORD;
-                  # kv/data/aabk/dev/pipeline/sp username | USERNAME;
                   azure/creds/azure_role_resource_deploy client_id | CLIENT_ID;
                   azure/creds/azure_role_resource_deploy client_secret | CLIENT_SECRET;
                 # If you want to use the GitHub Actions OIDC token, uncomment the following lines
-
-
+                # kv/data/aabk/dev/pipeline/sp password | PASSWORD;
+                # kv/data/aabk/dev/pipeline/sp username | USERNAME;
                 #  export VAULT_ADDR="http://ec2-34-228-142-60.compute-1.amazonaws.com:8200"
                 #  jwt_token=$(curl -s $ACTIONS_ID_TOKEN_REQUEST_URL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
                 #  vault login -method=jwt -path=jwt/ role="get-azure-creds-role" jwt="$jwt_token"
