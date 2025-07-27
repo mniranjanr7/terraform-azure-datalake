@@ -39,8 +39,8 @@ jobs:
                 method: jwt
                 role: cbu_jwt_role
                 secrets: |
-                  kv/data/aabk/dev/pipeline/sp password | PASSWORD;
-                  kv/data/aabk/dev/pipeline/sp username | USERNAME;
+                  # kv/data/aabk/dev/pipeline/sp password | PASSWORD;
+                  # kv/data/aabk/dev/pipeline/sp username | USERNAME;
                   azure/creds/azure_role_resource_deploy client_id | CLIENT_ID;
                   azure/creds/azure_role_resource_deploy client_secret | CLIENT_SECRET;
                 # If you want to use the GitHub Actions OIDC token, uncomment the following lines
@@ -52,7 +52,7 @@ jobs:
 
             - name: Read Dynamic Azure SP credentials
               run: |
-                echo "Username: ${{ steps.vault_jwt_auth.outputs.USERNAME }}"
-                echo "Password: ${{ steps.vault_jwt_auth.outputs.PASSWORD }}"
+                echo "Username: ${{ steps.vault_jwt_auth.outputs.CLIENT_ID }}"
+                echo "Password: ${{ steps.vault_jwt_auth.outputs.CLIENT_SECRET }}"
                 echo "Vault authentication successful and secrets retrieved."
               
